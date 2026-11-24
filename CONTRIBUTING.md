@@ -11,5 +11,7 @@
 ## Definition of done (target for full project)
 
 Checks pass; local backup exists; changelog updated; the UI remains responsive;
-the final installed app works. This foundation implements **US03.1 and US03.2
-only**; speed test, full test coverage, UI, packaging are later stories.
+the final installed app works. The backend (US03, US04) is complete and must keep
+≥ 90 % coverage (`scripts\run_checks.bat`); UI and packaging are later stories.
+Tests must never use the real network — inject a fake `SpeedTestProvider` or a
+fake speedtest client (see `tests/fakes.py`).

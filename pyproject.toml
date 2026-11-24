@@ -4,17 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "speed-tracker"
-version = "0.1.0"
-description = "Personal Internet speed tracker - Python and SQLite foundation"
+version = "0.2.0"
+description = "Personal Internet speed tracker: measure, store, analyze and export"
 readme = "README.md"
 requires-python = ">=3.12"
-# No third-party packages are needed for the US03.1/US03.2 database backend.
+# The backend (database, statistics, export) uses only the standard library.
 dependencies = []
 
 [project.optional-dependencies]
 ui = ["PySide6==6.8.3"]
 measurement = ["speedtest-cli==2.1.3"]
-dev = ["pytest==8.3.5", "pytest-cov==6.1.1", "pytest-qt==4.4.0", "ruff==0.11.0", "mypy==1.15.0"]
+# Backend checks; they need neither Qt nor the network.
+dev = ["pytest==8.3.5", "pytest-cov==6.1.1", "ruff==0.11.0", "mypy==1.15.0"]
+# UI tests (US06) need a Qt binding, so pytest-qt is kept separate from "dev".
+ui-test = ["pytest-qt==4.4.0"]
 build = ["pyinstaller==6.12.0"]
 
 [tool.setuptools.packages.find]
@@ -22,7 +25,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 addopts = "-ra"
 
 [tool.coverage.run]
@@ -37,8 +40,16 @@ src = ["src"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["speed_tracker", "tests"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
 mypy_path = "src"
+
+# PySide6 is optional and only imported lazily by the CLI entry point.
+[[tool.mypy.overrides]]
+module = ["PySide6", "PySide6.*"]
+ignore_missing_imports = true
 

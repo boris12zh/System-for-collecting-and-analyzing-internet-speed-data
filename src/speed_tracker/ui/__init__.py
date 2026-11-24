@@ -1,1 +1,1 @@
-"""Future PySide6 presentation layer (US05)."""
+"""PySide6 presentation layer (placeholders until US05)."""

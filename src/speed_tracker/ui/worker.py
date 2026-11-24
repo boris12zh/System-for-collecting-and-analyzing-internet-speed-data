@@ -1,4 +1,4 @@
-"""QThread shell for asynchronous tests (real execution is scheduled for US05)."""
+"""QThread shell; it will wrap SpeedTestRunner in US05."""
 
 from PySide6.QtCore import QThread, Signal
 
@@ -11,4 +11,4 @@ class SpeedTestWorker(QThread):
 
     def run(self) -> None:
         """Signal that the feature is unavailable until the next project stories."""
-        self.error_occurred.emit("Speed testing is not implemented yet (US03.3/US05).")
+        self.error_occurred.emit("The UI is not connected to the speed test engine yet (US05).")
