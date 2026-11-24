@@ -188,3 +188,18 @@ def test_corrupt_file_raises_database_error(tmp_path: Path) -> None:
     path.write_bytes(b"this is not a sqlite database" * 100)
     with pytest.raises(DatabaseError, match="Cannot initialize"):
         initialize_database(path)
+
+
+def test_locked_database_gives_readable_error(
+    repository: SQLiteResultRepository, db_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("speed_tracker.infrastructure.database.BUSY_TIMEOUT_SECONDS", 0.1)
+    blocker = sqlite3.connect(db_path)
+    try:
+        blocker.execute("BEGIN EXCLUSIVE")  # another process is writing
+        with pytest.raises(DatabaseError, match="Could not save speed test: database is locked"):
+            repository.save(SpeedTestResult(1, 1, 1))
+    finally:
+        blocker.rollback()
+        blocker.close()
+    assert repository.save(SpeedTestResult(1, 1, 1)).id == 1  # works once released

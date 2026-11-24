@@ -32,6 +32,10 @@
 - `run_checks.bat` enforces 90 % backend coverage.
 - Added `.gitignore`; removed outdated "no Git" / skeleton notes from the docs.
 - Models reject non-numeric values (e.g. strings, booleans) explicitly.
+- Locked databases produce a readable `DatabaseError` (tested); wait time is
+  `BUSY_TIMEOUT_SECONDS` in `database.py`.
+- `backup.bat` takes a label (`backup.bat US03_complete`); backup zips are
+  ignored by Git. US03 completion backup created.
 
 ## 0.1.0 — US03.1 / US03.2
 

@@ -19,3 +19,6 @@ dist/
 # Local data
 *.db
 *.sqlite3
+
+# Local per-story backup archives (scripts/backup.bat)
+backups/*.zip

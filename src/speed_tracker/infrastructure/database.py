@@ -20,6 +20,9 @@ from speed_tracker.infrastructure.paths import get_database_path
 
 SCHEMA_VERSION = 2
 
+# How long to wait for another process holding a write lock before failing.
+BUSY_TIMEOUT_SECONDS = 5.0
+
 _SCHEMA_V1 = """
 CREATE TABLE IF NOT EXISTS speed_tests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,10 +50,9 @@ def open_connection(database_path: Path | None = None) -> Iterator[sqlite3.Conne
     """Yield a row-aware connection, committing or rolling back atomically."""
     path = database_path if database_path is not None else get_database_path()
     try:
-        connection = sqlite3.connect(path, timeout=5)
+        connection = sqlite3.connect(path, timeout=BUSY_TIMEOUT_SECONDS)
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA foreign_keys = ON")
-        connection.execute("PRAGMA busy_timeout = 5000")
     except (sqlite3.Error, OSError) as exc:
         raise DatabaseError(f"Cannot open Speed Tracker database at {path}: {exc}") from exc
     try:
